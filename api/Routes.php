@@ -8,8 +8,6 @@
 
 namespace Smooth\Api;
 
-use Smooth\Api\Services\IndexService;
-
 class Routes extends \WP_REST_Controller
 {
 
@@ -18,24 +16,25 @@ class Routes extends \WP_REST_Controller
 	 */
 	private $service;
 
+	private $version = 1;
+
+	protected $namespace;
+
 	public function init()
 	{
-		add_action('rest_api_init', [$this, 'registerSmoothRoutes']);
+		$this->namespace = '/smooth/v' . $this->version . '/api';
+
+		add_action('rest_api_init', [$this, 'registerPostsRoutes']);
+		add_action('rest_api_init', [$this, 'registerCategoriesRoutes']);
+		add_action('rest_api_init', [$this, 'registerTagsRoutes']);
 	}
 
 	/**
-	 * Register the routes for the objects of the controller.
+	 * Post Routes
 	 */
-	public function registerSmoothRoutes()
+	public function registerPostsRoutes()
 	{
-		$version = '1';
-		$namespace = '/smooth/v' . $version . '/api';
-
-		/**
-		 * Posts
-		 */
-
-		register_rest_route($namespace, '/posts', array(
+		register_rest_route($this->namespace, '/posts', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => array($this, 'getPosts'),
@@ -44,7 +43,7 @@ class Routes extends \WP_REST_Controller
 			)
 		));
 
-		register_rest_route($namespace, '/posts/(?P<id>\d+)', array(
+		register_rest_route($this->namespace, '/posts/(?P<id>\d+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => array($this, 'getPostById'),
@@ -53,7 +52,7 @@ class Routes extends \WP_REST_Controller
 			)
 		));
 
-		register_rest_route($namespace, '/posts/(?P<category>[a-zA-Z\-]+)', array(
+		register_rest_route($this->namespace, '/posts/(?P<category>[a-zA-Z\-]+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => array($this, 'getPostsByCategory'),
@@ -61,12 +60,14 @@ class Routes extends \WP_REST_Controller
 				'args' => array(),
 			)
 		));
+	}
 
-		/**
-		 * Categories
-		 */
-
-		register_rest_route($namespace, '/categories', array(
+	/**
+	 * Category Routes
+	 */
+	public function registerCategoriesRoutes()
+	{
+		register_rest_route($this->namespace, '/categories', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => array($this, 'getCategories'),
@@ -75,7 +76,7 @@ class Routes extends \WP_REST_Controller
 			)
 		));
 
-		register_rest_route($namespace, '/categories/(?P<id>\d+)', array(
+		register_rest_route($this->namespace, '/categories/(?P<id>\d+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => array($this, 'getCategoryById'),
@@ -83,12 +84,14 @@ class Routes extends \WP_REST_Controller
 				'args' => array(),
 			)
 		));
+	}
 
-		/**
-		 * Tags
-		 */
-
-		register_rest_route($namespace, '/tags', array(
+	/**
+	 * Tag Routes
+	 */
+	public function registerTagsRoutes()
+	{
+		register_rest_route($this->namespace, '/tags', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => array($this, 'getTags'),
