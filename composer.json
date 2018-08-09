@@ -1,0 +1,13 @@
+{
+    "name": "entymon/blog-api",
+    "description": "Wordpress Basic API",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "entymon",
+            "email": "pawel.olejniczak.i@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
