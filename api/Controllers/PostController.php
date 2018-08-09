@@ -12,6 +12,10 @@ use Smooth\Api\Services\PostService;
 
 class PostController extends Controller
 {
+	private $limit = -1;
+
+	private $page = 1;
+
 	public function __construct()
 	{
 		$this->service = new PostService();
@@ -20,14 +24,26 @@ class PostController extends Controller
 	/**
 	 * Get posts
 	 *
+	 * Optional parameters:
+	 * - limit [int] number of items on page (default: -1)
+	 * - page [int] page counted from 1 (default: 1)
+	 *
 	 * @param \WP_REST_Request $request
 	 * @return \WP_REST_Response.
 	 */
 	public function getPosts(\WP_REST_Request $request)
 	{
+		$params = $request->get_params();
+
+		if (isset($params['limit'])) $this->limit = (int) $params['limit'];
+		if (isset($params['page'])) $this->page = (int) $params['page'];
+
+		$totalPosts = $this->service->getNumberOfPosts();
+
 		$args = array(
 			'post_status' => 'publish',
-			'posts_per_page' => -1
+			'posts_per_page' => $this->limit,
+			'paged' => $this->page
 		);
 
 		$query = new \WP_Query( $args );
@@ -39,7 +55,9 @@ class PostController extends Controller
 				$data[] = $this->service->getPostResponse($post);
 			}
 		}
-		return new \WP_REST_Response( $data, 200 );
+
+		$response = $this->service->getResponse($totalPosts, $this->limit, $this->page, $data);
+		return new \WP_REST_Response($response, 200);
 	}
 
 	/**

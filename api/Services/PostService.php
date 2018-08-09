@@ -9,6 +9,37 @@ class PostService extends Service
 	const FIRST_ELEMENT = 0;
 
 	/**
+	 * Returns total number of posts
+	 * by default: published
+	 *
+	 * @param string $status
+	 * @return int
+	 */
+	public function getNumberOfPosts($status = 'publish')
+	{
+		global $wpdb;
+		$query = sprintf("SELECT COUNT(*) AS count FROM {$wpdb->prefix}posts AS p WHERE p.post_status = '%s' AND p.post_type = 'post'", $status);
+		$result = $wpdb->get_row($query, OBJECT);
+		if ($result) {
+			return (int) $result->count;
+		}
+		return 0;
+	}
+
+	public function getResponse($total = 0, $limit = -1, $page = 1, $data = [])
+	{
+		return [
+			'meta' => [
+				'totalItems' => $total,
+				'totalPages' => ($limit !== -1 && $limit !== 0) ? ceil($total/$limit) : 1,
+				'currentPage' => $page,
+				'limit' => $limit,
+			],
+			'data' => $data
+		];
+	}
+
+	/**
 	 * @param \WP_Post $post
 	 * @return \Smooth\Api\Entities\Post
 	 */
