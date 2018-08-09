@@ -27,6 +27,30 @@ class PostService extends Service
 	}
 
 	/**
+	 * Returns total number of post for given category
+	 *
+	 * @param $categorySlug
+	 * @param string $status
+	 * @return int
+	 */
+	public function getNumberOfPostsInCategory($categorySlug, $status = 'publish')
+	{
+		global $wpdb;
+		$query = sprintf(
+			"SELECT COUNT(*) AS count 
+							FROM {$wpdb->prefix}posts AS p 
+							LEFT JOIN {$wpdb->prefix}term_relationships as tr ON tr.object_id = p.ID
+							LEFT JOIN {$wpdb->prefix}terms as t ON t.term_id = tr.term_taxonomy_id
+							WHERE p.post_status = '%s' AND p.post_type = 'post' AND t.slug = '%s'",
+			$status, $categorySlug);
+		$result = $wpdb->get_row($query, OBJECT);
+		if ($result) {
+			return (int) $result->count;
+		}
+		return 0;
+	}
+
+	/**
 	 * @param int $total
 	 * @param int $limit
 	 * @param int $page

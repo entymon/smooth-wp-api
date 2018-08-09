@@ -97,8 +97,28 @@ class PostController extends Controller
 	 */
 	public function getPostsByCategory(\WP_REST_Request $request)
 	{
+		$categorySlug = $request->get_param('category');
+		$totalPosts = $this->service->getNumberOfPostsInCategory($categorySlug);
 
+		$args = array(
+			'post_type' => 'post',
+			'tax_query' => array(
+				'taxonomy' => 'category',
+				'field'    => 'slug',
+				'terms'    => array( $categorySlug ),
+			),
+		);
+		$query = new \WP_Query( $args );
+		$posts = $query->posts;
 
-		return new \WP_REST_Response(['hello' => 'category'], 200);
+		$data = [];
+		if (!empty($posts)) {
+			foreach ($posts as $post) {
+				$data[] = $this->service->getPostResponse($post);
+			}
+		}
+
+		$response = $this->service->getResponse($totalPosts, $this->limit, $this->page, $data);
+		return new \WP_REST_Response($response, 200);
 	}
 }
