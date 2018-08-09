@@ -26,11 +26,18 @@ class PostService extends Service
 		return 0;
 	}
 
+	/**
+	 * @param int $total
+	 * @param int $limit
+	 * @param int $page
+	 * @param array $data
+	 * @return array
+	 */
 	public function getResponse($total = 0, $limit = -1, $page = 1, $data = [])
 	{
 		return [
 			'meta' => [
-				'totalItems' => $total,
+				'totalItems' => round($total, 0),
 				'totalPages' => ($limit !== -1 && $limit !== 0) ? ceil($total/$limit) : 1,
 				'currentPage' => $page,
 				'limit' => $limit,

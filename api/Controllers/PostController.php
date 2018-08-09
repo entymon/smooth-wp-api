@@ -8,13 +8,18 @@
 
 namespace Smooth\Api\Controllers;
 
+use Smooth\Api\Entities\Post;
 use Smooth\Api\Services\PostService;
 
 class PostController extends Controller
 {
+	const FIRST_ELEMENT = 0;
+
 	private $limit = -1;
 
 	private $page = 1;
+
+	private $postType = 'post';
 
 	public function __construct()
 	{
@@ -42,6 +47,7 @@ class PostController extends Controller
 
 		$args = array(
 			'post_status' => 'publish',
+			'post_type' => $this->postType,
 			'posts_per_page' => $this->limit,
 			'paged' => $this->page
 		);
@@ -68,7 +74,19 @@ class PostController extends Controller
 	 */
 	public function getPostById(\WP_REST_Request $request)
 	{
-		return new \WP_REST_Response(['hello' => 'get by id'], 200);
+		$args = array(
+			'p' => (int) $request->get_param('id'),
+		);
+
+		$query = new \WP_Query($args);
+		$posts = $query->posts;
+
+		$response = $this->service->getResponse(0.1, 1, 1, null);
+		if (!empty($posts)) {
+			$data = $this->service->getPostResponse($posts[self::FIRST_ELEMENT]);
+			$response = $this->service->getResponse(1, 1, 1, $data);
+		}
+		return new \WP_REST_Response($response, 200);
 	}
 
 	/**
@@ -79,6 +97,8 @@ class PostController extends Controller
 	 */
 	public function getPostsByCategory(\WP_REST_Request $request)
 	{
+
+
 		return new \WP_REST_Response(['hello' => 'category'], 200);
 	}
 }
