@@ -51,6 +51,50 @@ class PostService extends Service
 	}
 
 	/**
+	 * Get total of posts by keyword
+	 *
+	 * @param $keyword
+	 * @return null
+	 */
+	public function getCountPostsByKeyword($keyword)
+	{
+		global $wpdb;
+		$query = "SELECT count(*) AS amount FROM {$wpdb->prefix}posts AS p WHERE p.post_title LIKE '%{$keyword}%' OR p.post_content LIKE '%{$keyword}%'";
+		$result = $wpdb->get_row($query);
+		if ($result) {
+			return $result->amount;
+		}
+		return null;
+	}
+
+	/**
+	 * Get results by keyword
+	 *
+	 * @param $keyword
+	 * @param int $page
+	 * @param int $limit
+	 * @return array
+	 */
+	public function getPostsByKeyword($keyword, $page = 0, $limit = -1)
+	{
+		global $wpdb;
+		$query = "SELECT * FROM {$wpdb->prefix}posts AS p WHERE p.post_title LIKE '%{$keyword}%' OR p.post_content LIKE '%{$keyword}%' ";
+
+		if ($limit !== -1 && $page !== 1) {
+			$offset = ($page - 1) * $limit;
+			$query .= " LIMIT {$limit} OFFSET {$offset}";
+		} elseif ($limit !== -1) {
+			$query .= " LIMIT {$limit}";
+		}
+
+		$result = $wpdb->get_results($query);
+		if ($result) {
+			return $result;
+		}
+		return [];
+	}
+
+	/**
 	 * @param int $total
 	 * @param int $limit
 	 * @param int $page
@@ -75,6 +119,29 @@ class PostService extends Service
 	 * @return \Smooth\Api\Entities\Post
 	 */
 	public function getPostResponse(\WP_Post $post)
+	{
+		$object = new Post();
+		$object->id = $post->ID;
+		$object->type = $post->post_type;
+		$object->status = $post->post_status;
+		$object->slug = $post->post_name;
+		$object->author = $post->post_author;
+		$object->title = $post->post_title;
+		$object->content = $post->post_content;
+		$object->excerpt = $post->post_excerpt;
+		$object->category = $this->getCategory($post->ID);
+		$object->tags = $this->getTags($post->ID);
+		$object->modifiedAt = $post->post_modified;
+		$object->createdAt = $post->post_date;
+
+		return $object;
+	}
+
+	/**
+	 * @param \stdClass $post
+	 * @return \Smooth\Api\Entities\Post
+	 */
+	public function getPostResponseStdClass(\stdClass $post)
 	{
 		$object = new Post();
 		$object->id = $post->ID;

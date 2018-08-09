@@ -46,4 +46,21 @@ class TermService extends Service
 			'data' => $data
 		];
 	}
+
+	/**
+	 * Gets term ID by slug
+	 *
+	 * @return null | int
+	 */
+	public function getCategoryIdBySlug($slug)
+	{
+		global $wpdb;
+		$query = sprintf("SELECT t.term_id AS termId FROM {$wpdb->prefix}terms AS t WHERE slug = '%s'", $slug);
+		$result = $wpdb->get_row($query, OBJECT);
+
+		if ($result) {
+			return (int) $result->termId;
+		}
+		return null;
+	}
 }

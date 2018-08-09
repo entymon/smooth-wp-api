@@ -65,14 +65,28 @@ class Routes extends \WP_REST_Controller
 		));
 
 		/**
-		 * GET /smooth/v1/posts/{categorySlug}
-		 * GET /smooth/v1/posts/{categorySlug}?page=1
-		 * GET /smooth/v1/posts/{categorySlug}?page=1&limit=10
+		 * GET /smooth/v1/posts/category/{categorySlug}
+		 * GET /smooth/v1/posts/category/{categorySlug}?page=1
+		 * GET /smooth/v1/posts/category/{categorySlug}?page=1&limit=10
 		 */
-		register_rest_route($this->namespace, '/posts/(?P<category>[a-zA-Z\-]+)', array(
+		register_rest_route($this->namespace, '/posts/category/(?P<category>[a-zA-Z\-]+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
 				'callback' => array(new PostController(), 'getPostsByCategory'),
+				'permission_callback' => array($this, 'getPermissionsCheck'),
+				'args' => array(),
+			)
+		));
+
+		/**
+		 * GET /smooth/v1/posts/tag/{tagSlug}
+		 * GET /smooth/v1/posts/tag/{tagSlug}?page=1
+		 * GET /smooth/v1/posts/tag/{tagSlug}?page=1&limit=10
+		 */
+		register_rest_route($this->namespace, '/posts/tag/(?P<tag>[a-zA-Z\-]+)', array(
+			array(
+				'methods' => \WP_REST_Server::READABLE,
+				'callback' => array(new PostController(), 'getPostsByTag'),
 				'permission_callback' => array($this, 'getPermissionsCheck'),
 				'args' => array(),
 			)

@@ -10,5 +10,4 @@ namespace Smooth\Api\Services;
 
 class Service
 {
-
 }

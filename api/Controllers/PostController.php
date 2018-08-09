@@ -33,6 +33,8 @@ class PostController extends Controller
 	 * - limit [int] number of items on page (default: -1)
 	 * - page [int] page counted from 1 (default: 1)
 	 *
+	 * - search_keyword [string] - search by keyword
+	 *
 	 * @param \WP_REST_Request $request
 	 * @return \WP_REST_Response.
 	 */
@@ -52,15 +54,30 @@ class PostController extends Controller
 			'paged' => $this->page
 		);
 
-		$query = new \WP_Query( $args );
-		$posts = $query->posts;
-
 		$data = [];
-		if (!empty($posts)) {
-			foreach ($posts as $post) {
-				$data[] = $this->service->getPostResponse($post);
+		if (isset($params['keyword'])) {
+
+			$totalPosts = $this->service->getCountPostsByKeyword($params['keyword']);
+			$posts = $this->service->getPostsByKeyword($params['keyword'], $this->page, $this->limit);
+
+			if (!empty($posts)) {
+				foreach ($posts as $post) {
+					$data[] = $this->service->getPostResponseStdClass($post);
+				}
 			}
+
+		} else {
+			$query = new \WP_Query( $args );
+			$posts = $query->posts;
+			if (!empty($posts)) {
+				foreach ($posts as $post) {
+					$data[] = $this->service->getPostResponse($post);
+				}
+			}
+
 		}
+
+
 
 		$response = $this->service->getResponse($totalPosts, $this->limit, $this->page, $data);
 		return new \WP_REST_Response($response, 200);
@@ -97,16 +114,57 @@ class PostController extends Controller
 	 */
 	public function getPostsByCategory(\WP_REST_Request $request)
 	{
+		$params = $request->get_params();
+		if (isset($params['limit'])) $this->limit = (int) $params['limit'];
+		if (isset($params['page'])) $this->page = (int) $params['page'];
+
 		$categorySlug = $request->get_param('category');
 		$totalPosts = $this->service->getNumberOfPostsInCategory($categorySlug);
 
 		$args = array(
 			'post_type' => 'post',
+			'posts_per_page' => $this->limit,
+			'paged' => $this->page,
 			'tax_query' => array(
 				'taxonomy' => 'category',
 				'field'    => 'slug',
 				'terms'    => array( $categorySlug ),
 			),
+		);
+		$query = new \WP_Query( $args );
+		$posts = $query->posts;
+
+		$data = [];
+		if (!empty($posts)) {
+			foreach ($posts as $post) {
+				$data[] = $this->service->getPostResponse($post);
+			}
+		}
+
+		$response = $this->service->getResponse($totalPosts, $this->limit, $this->page, $data);
+		return new \WP_REST_Response($response, 200);
+	}
+
+	/**
+	 * Get posts by tag
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return \WP_REST_Response.
+	 */
+	public function getPostsByTag(\WP_REST_Request $request)
+	{
+		$params = $request->get_params();
+		if (isset($params['limit'])) $this->limit = (int) $params['limit'];
+		if (isset($params['page'])) $this->page = (int) $params['page'];
+
+		$tagSlug = $request->get_param('tag');
+		$totalPosts = $this->service->getNumberOfPostsInCategory($tagSlug);
+
+		$args = array(
+			'post_type' => 'post',
+			'posts_per_page' => $this->limit,
+			'paged' => $this->page,
+			'tag' => $tagSlug
 		);
 		$query = new \WP_Query( $args );
 		$posts = $query->posts;
