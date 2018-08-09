@@ -13,6 +13,8 @@ use Smooth\Api\Services\TermService;
 
 class CategoryController extends Controller
 {
+	const FIRST_ELEMENT = 0;
+
 	private $uncategorized = 'uncategorized';
 
 	public function __construct()
@@ -32,9 +34,9 @@ class CategoryController extends Controller
 			'taxonomy' => 'category',
 			'hide_empty' => false
 		]);
+		$terms = $query->terms;
 
 		$categories = [];
-		$terms = $query->terms;
 		if (!empty($terms)) {
 			foreach ($terms as $term) {
 				if ($term->slug !== $this->uncategorized) {
@@ -55,6 +57,19 @@ class CategoryController extends Controller
 	 */
 	public function getCategoryById(\WP_REST_Request $request)
 	{
-		return new \WP_REST_Response( ['hello' => 'category by ID'], 200 );
+		$query = new \WP_Term_Query([
+			'taxonomy' => 'category',
+			'hide_empty' => false,
+			'term_taxonomy_id' => (int) $request->get_param('id'),
+		]);
+		$terms = $query->terms;
+
+		$category = null;
+		if (!empty($terms)) {
+			$category = $this->service->getTermResponse($terms[self::FIRST_ELEMENT]);
+		}
+
+		$response = $this->service->getResponse(count($terms), $category);
+		return new \WP_REST_Response($response, 200);
 	}
 }
