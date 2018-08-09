@@ -10,5 +10,5 @@ namespace Smooth\Api\Controllers;
 
 class Controller
 {
-
+	protected $service;
 }

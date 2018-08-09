@@ -8,8 +8,15 @@
 
 namespace Smooth\Api\Controllers;
 
+use Smooth\Api\Services\PostService;
+
 class PostController extends Controller
 {
+	public function __construct()
+	{
+		$this->service = new PostService();
+	}
+
 	/**
 	 * Get posts
 	 *
@@ -18,7 +25,21 @@ class PostController extends Controller
 	 */
 	public function getPosts(\WP_REST_Request $request)
 	{
-		return new \WP_REST_Response(['hello' => 'get all smooths'], 200);
+		$args = array(
+			'post_status' => 'publish',
+			'posts_per_page' => -1
+		);
+
+		$query = new \WP_Query( $args );
+		$posts = $query->posts;
+
+		$data = [];
+		if (!empty($posts)) {
+			foreach ($posts as $post) {
+				$data[] = $this->service->getPostResponse($post);
+			}
+		}
+		return new \WP_REST_Response( $data, 200 );
 	}
 
 	/**
