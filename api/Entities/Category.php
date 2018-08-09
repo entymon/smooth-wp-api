@@ -13,5 +13,6 @@ class Category
 	public $id;
 	public $name;
 	public $slug;
+	public $itemsIn;
 	public $description;
 }

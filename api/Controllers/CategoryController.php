@@ -9,8 +9,17 @@
 namespace Smooth\Api\Controllers;
 
 
+use Smooth\Api\Services\TermService;
+
 class CategoryController extends Controller
 {
+	private $uncategorized = 'uncategorized';
+
+	public function __construct()
+	{
+		$this->service = new TermService();
+	}
+
 	/**
 	 * Get categories
 	 *
@@ -19,7 +28,23 @@ class CategoryController extends Controller
 	 */
 	public function getCategories(\WP_REST_Request $request)
 	{
-		return new \WP_REST_Response( ['hello' => 'category'], 200 );
+		$query = new \WP_Term_Query([
+			'taxonomy' => 'category',
+			'hide_empty' => false
+		]);
+
+		$categories = [];
+		$terms = $query->terms;
+		if (!empty($terms)) {
+			foreach ($terms as $term) {
+				if ($term->slug !== $this->uncategorized) {
+					$categories[] = $this->service->getTermResponse($term);
+				}
+			}
+		}
+
+		$response = $this->service->getResponse(count($categories), $categories);
+		return new \WP_REST_Response($response, 200);
 	}
 
 	/**

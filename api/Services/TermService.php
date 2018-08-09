@@ -12,7 +12,6 @@ use Smooth\Api\Entities\Category;
 
 class TermService extends Service
 {
-
 	/**
 	 * Get Category | Term
 	 *
@@ -25,8 +24,26 @@ class TermService extends Service
 		$object->id = $term->term_id;
 		$object->name = $term->name;
 		$object->slug = $term->slug;
+		$object->itemsIn = $term->count;
 		$object->description = $term->description;
 
 		return $object;
+	}
+
+	/**
+	 * @param int $total
+	 * @param int $limit
+	 * @param int $page
+	 * @param array $data
+	 * @return array
+	 */
+	public function getResponse($total = 0, $data = [])
+	{
+		return [
+			'meta' => [
+				'totalItems' => $total,
+			],
+			'data' => $data
+		];
 	}
 }
