@@ -17,7 +17,7 @@
 require_once __DIR__ . '/constants.php';
 
 $loader = require __DIR__ . '/vendor/autoload.php';
-$loader->addPsr4('Smooth\\', __DIR__);
+$loader->addPsr4('Smooth\\Api\\', __DIR__. '/api');
 
 $index = new \Smooth\Api\IndexController();
 $index->init();
