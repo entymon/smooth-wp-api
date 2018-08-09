@@ -34,6 +34,11 @@ class Routes extends \WP_REST_Controller
 	 */
 	public function registerPostsRoutes()
 	{
+		/**
+		 * GET /smooth/v1/posts
+		 * GET /smooth/v1/posts?page=1
+		 * GET /smooth/v1/posts?page=1&limit=5
+		 */
 		register_rest_route($this->namespace, '/posts', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
@@ -43,6 +48,9 @@ class Routes extends \WP_REST_Controller
 			)
 		));
 
+		/**
+		 * GET /smooth/v1/posts/{id}
+		 */
 		register_rest_route($this->namespace, '/posts/(?P<id>\d+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
@@ -52,6 +60,11 @@ class Routes extends \WP_REST_Controller
 			)
 		));
 
+		/**
+		 * GET /smooth/v1/posts/{categorySlug}
+		 * GET /smooth/v1/posts/{categorySlug}?page=1
+		 * GET /smooth/v1/posts/{categorySlug}?page=1&limit=10
+		 */
 		register_rest_route($this->namespace, '/posts/(?P<category>[a-zA-Z\-]+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
@@ -67,6 +80,9 @@ class Routes extends \WP_REST_Controller
 	 */
 	public function registerCategoriesRoutes()
 	{
+		/**
+		 * GET /smooth/v1/categories
+		 */
 		register_rest_route($this->namespace, '/categories', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
@@ -76,6 +92,9 @@ class Routes extends \WP_REST_Controller
 			)
 		));
 
+		/**
+		 * GET /smooth/v1/categories/{id}
+		 */
 		register_rest_route($this->namespace, '/categories/(?P<id>\d+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
@@ -91,6 +110,9 @@ class Routes extends \WP_REST_Controller
 	 */
 	public function registerTagsRoutes()
 	{
+		/**
+		 * GET /smooth/v1/tags
+		 */
 		register_rest_route($this->namespace, '/tags', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
@@ -102,10 +124,6 @@ class Routes extends \WP_REST_Controller
 	}
 
 	/**
-	 * GET /smooth/v1/posts
-	 * GET /smooth/v1/posts?page=1
-	 * GET /smooth/v1/posts?page=1&limit=5
-	 *
 	 * Get posts
 	 *
 	 * @param \WP_REST_Request $request
@@ -117,8 +135,6 @@ class Routes extends \WP_REST_Controller
 	}
 
 	/**
-	 * GET /smooth/v1/posts/{id}
-	 *
 	 * Get post by ID
 	 *
 	 * @param \WP_REST_Request $request
@@ -130,10 +146,6 @@ class Routes extends \WP_REST_Controller
 	}
 
 	/**
-	 * GET /smooth/v1/posts/{categorySlug}
-	 * GET /smooth/v1/posts/{categorySlug}?page=1
-	 * GET /smooth/v1/posts/{categorySlug}?page=1&limit=10
-	 *
 	 * Get posts by category
 	 *
 	 * @param \WP_REST_Request $request
@@ -145,8 +157,6 @@ class Routes extends \WP_REST_Controller
 	}
 
 	/**
-	 * GET /smooth/v1/categories
-	 *
 	 * Get categories
 	 *
 	 * @param \WP_REST_Request $request
@@ -158,8 +168,6 @@ class Routes extends \WP_REST_Controller
 	}
 
 	/**
-	 * GET /smooth/v1/categories/{id}
-	 *
 	 * Get category by ID
 	 *
 	 * @param \WP_REST_Request $request
@@ -171,8 +179,6 @@ class Routes extends \WP_REST_Controller
 	}
 
 	/**
-	 * GET /smooth/v1/tags
-	 *
 	 * Get tags
 	 *
 	 * @param \WP_REST_Request $request
