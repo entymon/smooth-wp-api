@@ -8,6 +8,10 @@
 
 namespace Smooth\Api;
 
+use Smooth\Api\Controllers\CategoryController;
+use Smooth\Api\Controllers\PostController;
+use Smooth\Api\Controllers\TagController;
+
 class Routes extends \WP_REST_Controller
 {
 
@@ -42,7 +46,7 @@ class Routes extends \WP_REST_Controller
 		register_rest_route($this->namespace, '/posts', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
-				'callback' => array($this, 'getPosts'),
+				'callback' => array(new PostController(), 'getPosts'),
 				'permission_callback' => array($this, 'getPermissionsCheck'),
 				'args' => array(),
 			)
@@ -54,7 +58,7 @@ class Routes extends \WP_REST_Controller
 		register_rest_route($this->namespace, '/posts/(?P<id>\d+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
-				'callback' => array($this, 'getPostById'),
+				'callback' => array(new PostController(), 'getPostById'),
 				'permission_callback' => array($this, 'getPermissionsCheck'),
 				'args' => array(),
 			)
@@ -68,7 +72,7 @@ class Routes extends \WP_REST_Controller
 		register_rest_route($this->namespace, '/posts/(?P<category>[a-zA-Z\-]+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
-				'callback' => array($this, 'getPostsByCategory'),
+				'callback' => array(new PostController(), 'getPostsByCategory'),
 				'permission_callback' => array($this, 'getPermissionsCheck'),
 				'args' => array(),
 			)
@@ -86,7 +90,7 @@ class Routes extends \WP_REST_Controller
 		register_rest_route($this->namespace, '/categories', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
-				'callback' => array($this, 'getCategories'),
+				'callback' => array(new CategoryController(), 'getCategories'),
 				'permission_callback' => array($this, 'getPermissionsCheck'),
 				'args' => array(),
 			)
@@ -98,7 +102,7 @@ class Routes extends \WP_REST_Controller
 		register_rest_route($this->namespace, '/categories/(?P<id>\d+)', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
-				'callback' => array($this, 'getCategoryById'),
+				'callback' => array(new CategoryController(), 'getCategoryById'),
 				'permission_callback' => array($this, 'getPermissionsCheck'),
 				'args' => array(),
 			)
@@ -116,77 +120,11 @@ class Routes extends \WP_REST_Controller
 		register_rest_route($this->namespace, '/tags', array(
 			array(
 				'methods' => \WP_REST_Server::READABLE,
-				'callback' => array($this, 'getTags'),
+				'callback' => array(new TagController(), 'getTags'),
 				'permission_callback' => array($this, 'getPermissionsCheck'),
 				'args' => array(),
 			)
 		));
-	}
-
-	/**
-	 * Get posts
-	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response.
-	 */
-	public function getPosts(\WP_REST_Request $request)
-	{
-		return new \WP_REST_Response( ['hello' => 'get all smooths'], 200 );
-	}
-
-	/**
-	 * Get post by ID
-	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response.
-	 */
-	public function getPostById(\WP_REST_Request $request)
-	{
-		return new \WP_REST_Response( ['hello' => 'get by id'], 200 );
-	}
-
-	/**
-	 * Get posts by category
-	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response.
-	 */
-	public function getPostsByCategory(\WP_REST_Request $request)
-	{
-		return new \WP_REST_Response( ['hello' => 'category'], 200 );
-	}
-
-	/**
-	 * Get categories
-	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response.
-	 */
-	public function getCategories(\WP_REST_Request $request)
-	{
-		return new \WP_REST_Response( ['hello' => 'category'], 200 );
-	}
-
-	/**
-	 * Get category by ID
-	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response.
-	 */
-	public function getCategoryById(\WP_REST_Request $request)
-	{
-		return new \WP_REST_Response( ['hello' => 'category by ID'], 200 );
-	}
-
-	/**
-	 * Get tags
-	 *
-	 * @param \WP_REST_Request $request
-	 * @return \WP_REST_Response.
-	 */
-	public function getTags(\WP_REST_Request $request)
-	{
-		return new \WP_REST_Response( ['hello' => 'tags'], 200 );
 	}
 
 	/**

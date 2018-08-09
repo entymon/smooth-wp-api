@@ -6,7 +6,7 @@
  * Time: 18:33
  */
 
-namespace Smooth\Api\Controller;
+namespace Smooth\Api\Controllers;
 
 class PostController extends Controller
 {
