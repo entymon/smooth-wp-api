@@ -2,7 +2,7 @@
 
 namespace Smooth\Api\Services;
 
-class IndexService
+class PostService extends Service
 {
 
 }
