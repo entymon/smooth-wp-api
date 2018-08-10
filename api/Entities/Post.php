@@ -16,6 +16,7 @@ class Post
 	public $slug;
 	public $author;
 	public $title;
+	public $imageUrl;
 	public $content;
 	public $excerpt;
 	public $category;

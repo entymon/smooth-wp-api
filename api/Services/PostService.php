@@ -21,7 +21,7 @@ class PostService extends Service
 		$query = sprintf("SELECT COUNT(*) AS count FROM {$wpdb->prefix}posts AS p WHERE p.post_status = '%s' AND p.post_type = 'post'", $status);
 		$result = $wpdb->get_row($query, OBJECT);
 		if ($result) {
-			return (int) $result->count;
+			return (int)$result->count;
 		}
 		return 0;
 	}
@@ -45,7 +45,7 @@ class PostService extends Service
 			$status, $categorySlug);
 		$result = $wpdb->get_row($query, OBJECT);
 		if ($result) {
-			return (int) $result->count;
+			return (int)$result->count;
 		}
 		return 0;
 	}
@@ -106,7 +106,7 @@ class PostService extends Service
 		return [
 			'meta' => [
 				'totalItems' => round($total, 0),
-				'totalPages' => ($limit !== -1 && $limit !== 0) ? ceil($total/$limit) : 1,
+				'totalPages' => ($limit !== -1 && $limit !== 0) ? ceil($total / $limit) : 1,
 				'currentPage' => $page,
 				'limit' => $limit,
 			],
@@ -127,6 +127,7 @@ class PostService extends Service
 		$object->slug = $post->post_name;
 		$object->author = $post->post_author;
 		$object->title = $post->post_title;
+		$object->imageUrl = $this->getImage($post->ID);
 		$object->content = $post->post_content;
 		$object->excerpt = $post->post_excerpt;
 		$object->category = $this->getCategory($post->ID);
@@ -150,6 +151,7 @@ class PostService extends Service
 		$object->slug = $post->post_name;
 		$object->author = $post->post_author;
 		$object->title = $post->post_title;
+		$object->imageUrl = $this->getImage($post->ID);
 		$object->content = $post->post_content;
 		$object->excerpt = $post->post_excerpt;
 		$object->category = $this->getCategory($post->ID);
@@ -158,6 +160,18 @@ class PostService extends Service
 		$object->createdAt = $post->post_date;
 
 		return $object;
+	}
+
+	public function getImage($postId)
+	{
+		$imageUrl = '';
+		if (has_post_thumbnail($postId)) {
+			$imageData = wp_get_attachment_image_src(get_post_thumbnail_id($postId), 'single-post-thumbnail');
+			if (!empty($imageData)) {
+				return $imageData[self::FIRST_ELEMENT];
+			}
+		}
+		return $imageUrl;
 	}
 
 	/**
