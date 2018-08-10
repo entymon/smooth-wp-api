@@ -43,7 +43,7 @@ class FilterService
 	public function checkIfConnectionAllowed($result)
 	{
 		if (!empty($result)) return $result;
-		if (!in_array($_SERVER['HTTP_HOST'], $this->alloedHosts)) {
+		if (!in_array($_SERVER['HTTP_HOST'], $this->allowedHosts)) {
 			return new \WP_Error( 'rest_not_logged_in', 'You are not allowed to see this content.', array( 'status' => 403 ) );
 		}
 		return $result;
