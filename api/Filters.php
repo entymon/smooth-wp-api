@@ -13,8 +13,12 @@ use Smooth\Api\Services\FilterService;
 
 class Filters
 {
+
+
 	public function init()
 	{
 		add_filter( 'posts_where', [new FilterService(), 'keywordPostsWhere'], 10, 2 );
+
+		add_filter( 'rest_authentication_errors', [new FilterService(), 'checkIfConnectionAllowed'], 10, 1 );
 	}
 }

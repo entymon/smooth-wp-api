@@ -11,6 +11,17 @@ namespace Smooth\Api\Services;
 
 class FilterService
 {
+	private $allowedHosts = [];
+	
+	public function __construct()
+	{
+		$this->allowedHosts[] = getenv('ALLOWED_DEV_API_HOST');
+		$this->allowedHosts[] = getenv('ALLOWED_PROD_API_HOST');
+		$this->allowedHosts[] = getenv('ALLOWED_DEV_FRONT_END');
+		$this->allowedHosts[] = getenv('ALLOWED_PROD_FRONT_END');
+		$this->allowedHosts[] = getenv('ALLOWED_PROD_FRONT_END_2');
+	}
+
 	/**
 	 * Filter function for extendGetPostsQuery()
 	 *
@@ -20,7 +31,6 @@ class FilterService
 	 */
 	public function keywordPostsWhere( $where, $wp_query )
 	{
-
 		global $wpdb;
 		if ($keyword = $wp_query->get('keyword')) {
 			$escapedValue = esc_sql($wpdb->esc_like($keyword));
@@ -28,5 +38,14 @@ class FilterService
 			$where .= $query;
 		}
 		return $where;
+	}
+
+	public function checkIfConnectionAllowed($result)
+	{
+		if (!empty($result)) return $result;
+		if (!in_array($_SERVER['HTTP_HOST'], $this->alloedHosts)) {
+			return new \WP_Error( 'rest_not_logged_in', 'You are not allowed to see this content.', array( 'status' => 403 ) );
+		}
+		return $result;
 	}
 }

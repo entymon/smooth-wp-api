@@ -19,10 +19,15 @@ require_once __DIR__ . '/constants.php';
 $loader = require __DIR__ . '/vendor/autoload.php';
 $loader->addPsr4('Smooth\\Api\\', __DIR__. '/api');
 
+$dotEnv = new Dotenv\Dotenv(__DIR__);
+$dotEnv->load();
+
 $filter = new \Smooth\Api\Filters();
 $filter->init();
 
 $index = new \Smooth\Api\Routes();
 $index->init();
+
+
 
 
