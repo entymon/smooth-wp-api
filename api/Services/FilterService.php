@@ -76,7 +76,8 @@ class FilterService
 		$whitelist = [
 			'127.0.0.1',
 			'::1',
-			getenv('ALLOWED_IP_1')
+			getenv('ALLOWED_IP_1'),
+			getenv('ALLOWED_IP_2'),
 		];
 
 		if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
