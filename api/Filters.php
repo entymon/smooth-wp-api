@@ -21,6 +21,8 @@ class Filters
 
 		add_filter( 'rest_authentication_errors', [new FilterService(), 'checkIfConnectionAllowed'], 10, 1 );
 
+		add_filter( 'rest_authentication_errors', [new FilterService(), 'restrictAccessForUpdates'], 10, 1 );
+
 		add_filter( 'rest_api_init', [new FilterService(), 'restrictRestApiToHosts']);
 	}
 }

@@ -40,11 +40,34 @@ class FilterService
 		return $where;
 	}
 
+	/**
+	 * Allow only selected domain to get content
+	 *
+	 * @param $result
+	 * @return \WP_Error
+	 */
 	public function checkIfConnectionAllowed($result)
 	{
 		if (!empty($result)) return $result;
 		if (!in_array($_SERVER['HTTP_HOST'], $this->allowedHosts)) {
 			return new \WP_Error( 'rest_not_logged_in', 'You are not allowed to see this content.', array( 'status' => 403 ) );
+		}
+		return $result;
+	}
+
+	/**
+	 * Allow GET to gets content without restrictions
+	 *
+	 * @param $result
+	 * @return \WP_Error
+	 */
+	public function restrictAccessForUpdates($result)
+	{
+		$restrictedMethods = ['POST', 'PUT', 'DELETE'];
+
+		if (!empty($result)) return $result;
+		if (!is_user_logged_in() && in_array($_SERVER['REQUEST_METHOD'], $restrictedMethods)) {
+			return new \WP_Error( 'rest_not_logged_in', 'You have to be logged in to make this action.', array( 'status' => 403 ) );
 		}
 		return $result;
 	}
@@ -61,4 +84,6 @@ class FilterService
 			die('REST API is disabled.');
 		}
 	}
+
+
 }
