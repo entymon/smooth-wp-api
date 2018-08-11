@@ -20,5 +20,7 @@ class Filters
 		add_filter( 'posts_where', [new FilterService(), 'keywordPostsWhere'], 10, 2 );
 
 		add_filter( 'rest_authentication_errors', [new FilterService(), 'checkIfConnectionAllowed'], 10, 1 );
+
+		add_filter( 'rest_api_init', [new FilterService(), 'restrictRestApiToHosts']);
 	}
 }

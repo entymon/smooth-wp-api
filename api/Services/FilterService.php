@@ -48,4 +48,17 @@ class FilterService
 		}
 		return $result;
 	}
+
+	public function restrictRestApiToHosts() {
+		$whitelist = [
+			'172.20.0.1',
+			'127.0.0.1',
+			'::1',
+			'52.211.165.186'
+		];
+
+		if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
+			die('REST API is disabled.');
+		}
+	}
 }
